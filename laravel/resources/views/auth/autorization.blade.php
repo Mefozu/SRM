@@ -43,6 +43,9 @@
                     </form>
                 </div>
                 </form>
+            <p class="mt-3 text-center">
+                <a href="{{ url('/') }}">Вернуться на главную</a>
+            </p>
                 </div>
                 <div class="card-footer text-center">
                     <small class="text-muted">Don't have an account? <a href="#">Sign up</a></small>
