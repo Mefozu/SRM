@@ -17,10 +17,22 @@ use Illuminate\Support\Facades\Route;
 //    return view('welcome');
 //});
 
-Route::get('/',function (){
-   return view('auth.autorization');
+Route::get('/', function (){
+   return view('welcome');
 });
 
-Route::namespace('Auth')->group(function () {
-    Route::post('/auth', 'AuthController@auth');
-});
+//Route::get('/login',function (){
+//   return view('auth.login');
+//})->name('login');
+
+//Route::get('/',function (){
+//   return view('auth.autorization');
+//});
+//
+//Route::namespace('Auth')->group(function () {
+//    Route::post('/auth', 'AuthController@auth');
+//});
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
