@@ -6,6 +6,8 @@
       <sourceFolder url="file://$MODULE_DIR$/laravel/tests" isTestSource="true" packagePrefix="Tests\" />
       <sourceFolder url="file://$MODULE_DIR$/laravel/tests/Feature" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/laravel/tests/Unit" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/laravel/database/factories" isTestSource="false" packagePrefix="Database\Factories\" />
+      <sourceFolder url="file://$MODULE_DIR$/laravel/database/seeders" isTestSource="false" packagePrefix="Database\Seeders\" />
       <excludeFolder url="file://$MODULE_DIR$/laravel/vendor/asm89/stack-cors" />
       <excludeFolder url="file://$MODULE_DIR$/laravel/vendor/brick/math" />
       <excludeFolder url="file://$MODULE_DIR$/laravel/vendor/carbonphp/carbon-doctrine-types" />
