@@ -41,13 +41,24 @@
     </style>
 </head>
 <body>
-<!-- Боковая навигационная панель -->
+
 <div class="sidebar">
     <h2 class="text-center text-white">SRM Система</h2>
     <a href="{{ route('employees.index') }}">Сотрудники</a>
     <a href="#">Задачи</a>
     <a href="{{ route('departments.index') }}">Отделы</a>
     <a href="#">Задачи</a>
+<<<<<<< Updated upstream
+=======
+    @if(auth()->check() && (auth()->user()->role === 'admin' || auth()->user()->role === 'manager'))
+        <li class="menu-item">
+            <a href="{{ route('employees.index') }}">Сотрудники</a>
+        </li>
+        <li class="menu-item">
+            <a href="{{ route('departments.index') }}">Отделы</a>
+        </li>
+    @endif
+>>>>>>> Stashed changes
 </div>
 
 <!-- Основной контент -->

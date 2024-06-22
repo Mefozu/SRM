@@ -64,4 +64,14 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
     ];
+<<<<<<< Updated upstream
+=======
+    protected $routeMiddleware = [
+        // другие middleware
+        'admin' => \App\Http\Middleware\AdminMiddleware::class,
+        'manager' => \App\Http\Middleware\ManagerMiddleware::class,
+        'admin_or_manager' => \App\Http\Middleware\AdminOrManagerMiddleware::class,
+    ];
+
+>>>>>>> Stashed changes
 }
