@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Models\Department;
 
 class AdminController extends Controller
 {
@@ -23,17 +24,24 @@ class AdminController extends Controller
     public function index()
     {
         $users = User::all();
-        return view('admin.index', compact('users'));
+        $departments = Department::all();
+
+        return view('admin.index', compact('users', 'departments'));
     }
 
     // Метод для назначения отдела пользователю
-    public function assignDepartment(Request $request, $id)
+    public function assignDepartment(Request $request, $userId)
+
     {
-        $user = User::find($id);
-        $user->department = $request->input('department');
+        $request->validate([
+            'department_id' => 'required|exists:departments,id',
+        ]);
+
+        $user = User::findOrFail($userId);
+        $user->department_id = $request->input('department_id');
         $user->save();
 
-        return redirect()->route('admin.index')->with('success', 'Отдел назначен пользователю.');
+        return redirect()->back()->with('success', 'Отдел успешно назначен пользователю.');
     }
 
     // Метод для удаления пользователя
@@ -43,5 +51,13 @@ class AdminController extends Controller
         $user->delete();
 
         return redirect()->route('admin.index')->with('success', 'Пользователь удален.');
+    }
+    public function assignManagerRole(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+        $user->role = 'manager'; // Устанавливаем роль "менеджер"
+        $user->save();
+
+        return redirect()->route('admin.index')->with('success', 'Роль менеджера успешно назначена пользователю.');
     }
 }

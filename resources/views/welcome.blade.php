@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SRM Система</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <style>
         body {
             display: flex;
@@ -44,15 +45,21 @@
 <!-- Боковая навигационная панель -->
 <div class="sidebar">
     <h2 class="text-center text-white">SRM Система</h2>
-    <a href="{{ route('employees.index') }}">Сотрудники</a>
     <a href="#">Задачи</a>
-    <a href="{{ route('departments.index') }}">Отделы</a>
-    <a href="#">Задачи</a>
+    @if(auth()->user()->is_admin)
+        <li class="menu-item">
+            <a href="{{ route('employees.index') }}">Сотрудники</a>
+        </li>
+        <li class="menu-item">
+            <a href="{{ route('departments.index') }}">Отделы</a>
+        </li>
+    @endif
+
 </div>
 
 <!-- Основной контент -->
 <div class="content">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-dark bg-dark">
         <a class="navbar-brand" href="#">SRM Система</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>

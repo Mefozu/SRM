@@ -1,16 +1,17 @@
+
+
 @extends('layouts.app')
 
 @section('content')
     <div class="container">
-        <h1>{{ $department->name }}</h1>
-        <h2>Сотрудники:</h2>
+        <h1>Сотрудники отдела "{{ $department->name }}"</h1>
         <table class="table">
             <thead>
             <tr>
-                <th>ID</th>
-                <th>Имя</th>
-                <th>Email</th>
-                <th>Должность</th>
+                <th scope="col">ID</th>
+                <th scope="col">Имя</th>
+                <th scope="col">Email</th>
+                <th scope="col">Должность</th>
             </tr>
             </thead>
             <tbody>

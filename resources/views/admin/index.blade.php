@@ -6,11 +6,11 @@
         <table class="table">
             <thead>
             <tr>
-                <th>ID</th>
-                <th>Имя</th>
-                <th>Email</th>
-                <th>Отдел</th>
-                <th>Действия</th>
+                <th scope="col">ID</th>
+                <th scope="col">Имя</th>
+                <th scope="col">Email</th>
+                <th scope="col">Отдел</th>
+                <th scope="col">Действия</th>
             </tr>
             </thead>
             <tbody>
@@ -23,13 +23,22 @@
                     <td>
                         <form action="{{ route('admin.assignDepartment', $user->id) }}" method="POST" style="display: inline;">
                             @csrf
-                            <input type="text" name="department" placeholder="Назначить отдел" required>
+                            <select name="department_id" required>
+                                @foreach ($departments as $department)
+                                    <option value="{{ $department->id }}">{{ $department->name }}</option>
+                                @endforeach
+                            </select>
                             <button type="submit" class="btn btn-primary">Назначить</button>
                         </form>
                         <form action="{{ route('admin.deleteUser', $user->id) }}" method="POST" style="display: inline;">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger">Удалить</button>
+                        </form>
+                        <!-- Форма для назначения роли "менеджер" -->
+                        <form action="{{ route('admin.assignManagerRole', $user->id) }}" method="POST" style="display: inline;">
+                            @csrf
+                            <button type="submit" class="btn btn-success">Назначить менеджером</button>
                         </form>
                     </td>
                 </tr>
@@ -38,3 +47,8 @@
         </table>
     </div>
 @endsection
+
+@push('scripts')
+    <!-- Bootstrap JS (если не используется CDN) -->
+    {{-- <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script> --}}
+@endpush
