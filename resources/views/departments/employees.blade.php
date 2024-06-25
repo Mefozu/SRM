@@ -1,10 +1,11 @@
-
-
 @extends('layouts.app')
 
 @section('content')
     <div class="container">
-        <h1>Сотрудники отдела "{{ $department->name }}"</h1>
+        <h1>Отдел: {{ $department->name }}</h1>
+        <p>Менеджер: {{ $department->manager ? $department->manager->name : 'Не назначен' }}</p>
+
+        <h3>Сотрудники отдела:</h3>
         <table class="table">
             <thead>
             <tr>
@@ -15,12 +16,12 @@
             </tr>
             </thead>
             <tbody>
-            @foreach($employees as $employee)
+            @foreach($department->users as $user)
                 <tr>
-                    <td>{{ $employee->id }}</td>
-                    <td>{{ $employee->name }}</td>
-                    <td>{{ $employee->email }}</td>
-                    <td>{{ $employee->position }}</td>
+                    <td>{{ $user->id }}</td>
+                    <td>{{ $user->name }}</td>
+                    <td>{{ $user->email }}</td>
+                    <td>{{ $user->position }}</td>
                 </tr>
             @endforeach
             </tbody>

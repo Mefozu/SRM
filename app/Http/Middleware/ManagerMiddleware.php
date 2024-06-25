@@ -7,19 +7,12 @@ use Illuminate\Support\Facades\Auth;
 
 class ManagerMiddleware
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @return mixed
-     */
     public function handle($request, Closure $next)
     {
-        if (Auth::check() && Auth::user()->role === 'manager') {
+        if (Auth::check() && (Auth::user()->role === 'manager' || Auth::user()->role === 'admin')) {
             return $next($request);
         }
 
-        return redirect('/'); // или на страницу ошибки
+        return redirect('/home')->with('error', 'You do not have manager access.');
     }
 }

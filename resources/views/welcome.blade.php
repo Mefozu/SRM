@@ -45,16 +45,14 @@
 <!-- Боковая навигационная панель -->
 <div class="sidebar">
     <h2 class="text-center text-white">SRM Система</h2>
-    <a href="#">Задачи</a>
-    @if(auth()->user()->is_admin)
-        <li class="menu-item">
-            <a href="{{ route('employees.index') }}">Сотрудники</a>
-        </li>
-        <li class="menu-item">
-            <a href="{{ route('departments.index') }}">Отделы</a>
-        </li>
+    <a href="{{ route('tasks.index') }}">Задачи</a>
+    @if(auth()->check() && (auth()->user()->is_admin || auth()->user()->role === 'manager'))
+        <a href="{{ route('employees.index') }}">Сотрудники</a>
+        <a href="{{ route('departments.index') }}">Отделы</a>
     @endif
-
+    @if(auth()->check() && auth()->user()->role === 'manager')
+        <a href="{{ route('manager.reviewTasks') }}">Проверить задачи</a>
+    @endif
 </div>
 
 <!-- Основной контент -->
@@ -67,7 +65,6 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 @guest
-                    <!-- Элементы для гостей -->
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('register') }}">Регистрация</a>
                     </li>
@@ -75,15 +72,14 @@
                         <a class="nav-link" href="{{ route('login') }}">Вход</a>
                     </li>
                 @else
-                    <!-- Элементы для аутентифицированных пользователей -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             {{ Auth::user()->name }}
                         </a>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="{{ route('profile.show') }}">Профиль</a> <!-- Ссылка на профиль -->
-                            @if(Auth::user()->is_admin)
-                                <a class="dropdown-item" href="{{ route('admin.index') }}"><br>Админ панель</a> <!-- Ссылка на админ панель -->
+                            <a href="{{ Auth::check() ? route('profile.show', ['id' => Auth::user()->id]) : '#' }}">Профиль</a>
+                            @if(Auth::check() && Auth::user()->is_admin)
+                                <a class="dropdown-item" href="{{ route('admin.index') }}">Админ панель</a> <!-- Ссылка на админ панель -->
                             @endif
                             <div class="dropdown-divider"></div>
                             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">

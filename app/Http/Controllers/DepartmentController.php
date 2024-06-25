@@ -32,11 +32,17 @@ class DepartmentController extends Controller
 
         return redirect()->route('departments.employees', $department->id)->with('success', 'Отдел успешно создан.');
     }
-    public function employees(Department $department)
-    {
-        $employees = User::where('department', $department->id)->get();
 
-        return view('departments.employees', compact('department', 'employees'));
+    public function employees($department_id)
+    {
+        $department = Department::with('manager', 'users')->findOrFail($department_id);
+        return view('departments.employees', compact('department'));
+    }
+
+    public function show($id)
+    {
+        $department = Department::with('manager', 'users')->findOrFail($id);
+        return view('departments.employees', compact('department'));
     }
 
     // Другие методы для редактирования и удаления отделов
