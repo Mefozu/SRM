@@ -94,7 +94,7 @@
                                     <tr>
                                         <th scope="row">{{ $loop->iteration }}</th>
                                         <td>{{ $task->title }}</td>
-                                        <td>{{ $task->creator->name }}</td>
+                                        <td>{{ $task->creator->name ?? 'Неизвестно' }}</td>
                                         <td>{{ $task->due_date->format('d.m.Y H:i') }}</td>
                                         <td>{{ $task->status }}</td>
                                         <td>
@@ -133,7 +133,7 @@
                                     <tr>
                                         <th scope="row">{{ $loop->iteration }}</th>
                                         <td>{{ $task->title }}</td>
-                                        <td>{{ $task->creator->name }}</td>
+                                        <td>{{ $task->creator->name ?? 'Неизвестно' }}</td>
                                         <td>{{ $task->completed_at ? $task->completed_at->format('d.m.Y H:i') : '' }}</td>
                                         <td>{{ $task->comment }}</td>
                                     </tr>
@@ -163,7 +163,7 @@
                                     <tr>
                                         <th scope="row">{{ $loop->iteration }}</th>
                                         <td>{{ $task->title }}</td>
-                                        <td>{{ $task->creator->name }}</td>
+                                        <td>{{ $task->creator->name ?? 'Неизвестно' }}</td>
                                         <td>{{ $task->due_date->format('d.m.Y H:i') }}</td>
                                         <td>{{ $task->status }}</td>
                                         <td>

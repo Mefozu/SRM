@@ -19,21 +19,15 @@ class TaskController extends Controller
         $users = User::all();
         $departments = Department::all();
 
-        // Задачи, которые не завершены
-        $tasks = Task::where(function ($query) use ($user) {
-            $query->where('assigned_to', $user->id)
-                ->orWhere('department_id', $user->department_id);
-        })
+        // Задачи, назначенные текущему пользователю
+        $tasks = Task::where('assigned_to', $user->id)
             ->where('status', '!=', 'completed')
             ->where('is_additional', false)
             ->with(['assignedTo', 'creator'])
             ->get();
 
-        // Дополнительные задачи
-        $additionalTasks = Task::where(function ($query) use ($user) {
-            $query->where('assigned_to', $user->id)
-                ->orWhere('department_id', $user->department_id);
-        })
+        // Дополнительные задачи, назначенные текущему пользователю
+        $additionalTasks = Task::where('assigned_to', $user->id)
             ->where('status', '!=', 'completed')
             ->where('is_additional', true)
             ->with(['assignedTo', 'creator'])
@@ -46,7 +40,10 @@ class TaskController extends Controller
 
     public function show(Task $task)
     {
-        if ($task->assigned_to !== auth()->id() && $task->department_id !== auth()->user()->department_id) {
+        $user = Auth::user();
+
+        // Проверка, что задача назначена текущему пользователю
+        if ($task->assigned_to !== $user->id) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -74,9 +71,7 @@ class TaskController extends Controller
                 'title' => 'required|string|max:255',
                 'description' => 'nullable|string',
                 'due_date' => 'required|date',
-                'assign_to' => 'required|string|in:user,department',
-                'assigned_to' => 'required_if:assign_to,user|integer|exists:users,id',
-                'department_id' => 'required_if:assign_to,department|integer|exists:departments,id',
+                'assigned_to' => 'required|integer|exists:users,id',
                 'is_additional' => 'boolean',
             ]);
 
@@ -89,13 +84,8 @@ class TaskController extends Controller
                 'created_by' => auth()->id(),
                 'status' => 'pending',
                 'is_additional' => $request->has('is_additional') ? $request->is_additional : false,
+                'assigned_to' => $request->assigned_to,
             ];
-
-            if ($request->assign_to == 'user') {
-                $taskData['assigned_to'] = $request->assigned_to;
-            } elseif ($request->assign_to == 'department') {
-                $taskData['department_id'] = $request->department_id;
-            }
 
             $task = Task::create($taskData);
             Log::info('Task created:', $task->toArray());
@@ -110,8 +100,14 @@ class TaskController extends Controller
     public function submitForReview($taskId)
     {
         $task = Task::findOrFail($taskId);
+        $user = Auth::user();
 
-        $manager = User::where('role', 'manager')->first(); // Пример логики назначения менеджера
+        // Проверка, что задача назначена текущему пользователю
+        if ($task->assigned_to !== $user->id) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $manager = User::where('role', 'manager')->first();
 
         if ($manager) {
             $task->status = 'in_review';
@@ -127,6 +123,13 @@ class TaskController extends Controller
     public function approve($taskId)
     {
         $task = Task::findOrFail($taskId);
+        $user = Auth::user();
+
+        // Проверка, что задача назначена текущему пользователю
+        if ($task->assigned_to !== $user->id) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $task->status = 'completed';
         $task->completed_at = now();
         $task->save();
@@ -141,6 +144,13 @@ class TaskController extends Controller
         ]);
 
         $task = Task::findOrFail($taskId);
+        $user = Auth::user();
+
+        // Проверка, что задача назначена текущему пользователю
+        if ($task->assigned_to !== $user->id) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $task->status = 'rejected';
         $task->rejection_reason = $request->reason;
         $task->save();
@@ -157,6 +167,13 @@ class TaskController extends Controller
     public function destroy(Request $request)
     {
         $task = Task::findOrFail($request->task_id);
+        $user = Auth::user();
+
+        // Проверка, что задача назначена текущему пользователю
+        if ($task->assigned_to !== $user->id) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $task->delete();
 
         return redirect()->route('tasks.index')->with('success', 'Задача успешно удалена.');
@@ -167,35 +184,31 @@ class TaskController extends Controller
         $user = Auth::user();
 
         // Основные задачи, которые не завершены
-        $tasks = Task::where(function ($query) use ($user) {
-            $query->where('assigned_to', $user->id)
-                ->orWhere('department_id', $user->department_id);
-        })
+        $tasks = Task::where('assigned_to', $user->id)
             ->where('status', '!=', 'completed')
             ->where('is_additional', false)
             ->with(['assignedTo', 'creator'])
             ->get();
 
         // Завершенные задачи
-        $completedTasks = Task::where(function ($query) use ($user) {
-            $query->where('assigned_to', $user->id)
-                ->orWhere('department_id', $user->department_id);
-        })
+        $completedTasks = Task::where('assigned_to', $user->id)
             ->where('status', 'completed')
             ->where('is_additional', false)
             ->with(['assignedTo', 'creator'])
             ->get();
 
-        // Дополнительная работа
-        $additionalTasks = Task::where(function ($query) use ($user) {
-            $query->where('assigned_to', $user->id)
-                ->orWhere('department_id', $user->department_id);
-        })
+        // Дополнительные задачи
+        $additionalTasks = Task::where('assigned_to', $user->id)
             ->where('is_additional', true)
             ->with(['assignedTo', 'creator'])
             ->get();
 
-        Log::info('Tasks retrieved for user:', ['user_id' => $user->id, 'tasks' => $tasks, 'completedTasks' => $completedTasks, 'additionalTasks' => $additionalTasks]);
+        Log::info('Tasks retrieved for user:', [
+            'user_id' => $user->id,
+            'tasks' => $tasks,
+            'completedTasks' => $completedTasks,
+            'additionalTasks' => $additionalTasks
+        ]);
 
         return view('profile.show', compact('tasks', 'completedTasks', 'additionalTasks'));
     }
